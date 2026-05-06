@@ -13,6 +13,12 @@ public class PaymentService {
 
     private final Map<String, PaymentStrategy> map;
 
+    /**
+     * Process a payment
+     * @param paymentType
+     * @param amount
+     * @return true or false if the payment is processed successfully
+     */
     public boolean processPayment(String paymentType, Double amount){
         PaymentStrategy strategy = map.get(paymentType);
 

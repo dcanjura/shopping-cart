@@ -28,6 +28,11 @@ public class OrderService {
     private final PaymentClient paymentClient;
     private final ProductClient productClient;
 
+    /**
+     * Creates the order based on a request and sends it to payment process
+     * @param request
+     * @return OrderResponse in case payment went through successfully
+     */
     public OrderResponse createOrder(OrderRequest request){
         if(request.cartId() == null || request.cartId().isBlank()){
             throw new BadRequestException("cartId is required");

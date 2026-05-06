@@ -18,6 +18,11 @@ public class ProductService {
 
     private final ProductRepository repository;
 
+    /**
+     * Creates a new product and saves it to the DB
+     * @param request
+     * @return ProductResponse
+     */
     public ProductResponse saveProduct(ProductRequest request){
         return ProductMapper.toResponse(repository.save(Product.builder()
                 .name(request.name())
@@ -26,15 +31,30 @@ public class ProductService {
                 .build()));
     }
 
-    public ProductResponse getProduct(Long id){
-        return ProductMapper.toResponse(repository.getProductById(id));
-    }
-
+    /**
+     * Retrieves all products based on pagination request
+     * @param pageable
+     * @return Pages of ProductResponse values
+     */
     public Page<ProductResponse> getAllProducts(Pageable pageable){
         return repository.findAll(pageable)
                 .map(ProductMapper::toResponse);
     }
 
+    /**
+     * Gets a product based on ID
+     * @param id
+     * @return ProductResponse
+     */
+    public ProductResponse getProduct(Long id){
+        return ProductMapper.toResponse(repository.getProductById(id));
+    }
+
+    /**
+     * Reduces stock whenever a purchase is made successfully
+     * @param productId
+     * @param quantity
+     */
     public void reduceStock(String productId, Integer quantity) {
         if(productId == null || productId.isBlank()){
             throw new BadRequestException("productId is required");
@@ -52,10 +72,21 @@ public class ProductService {
         repository.save(product);
     }
 
+    /**
+     * Updates a product based on id and request bodu
+     * @param request
+     * @param id
+     * @return new ProductResponse
+     */
     public ProductResponse updateProduct(ProductRequest request, Long id){
         return ProductMapper.toResponse(repository.save(new Product(id, request.name(), request.price(), request.stock())));
     }
 
+    /**
+     * Deletes a product from the DB
+     * @param id
+     * @return either success or throws exception when no record found
+     */
     public String deleteProduct(String id){
         if(repository.getProductById(Long.valueOf(id)) != null){
             repository.deleteById(id);
