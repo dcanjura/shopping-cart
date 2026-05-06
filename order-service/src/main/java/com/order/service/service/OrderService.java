@@ -35,10 +35,6 @@ public class OrderService {
 
         CartResponse cart = cartClient.getCartById(request.cartId());
 
-        if(cart.items() == null || cart.items().isEmpty()){
-            throw new NotFoundException("No information found for cartId");
-        }
-
         Order order = Order.builder()
                 .customerId(request.customerId())
                 .orderStatus(OrderStatus.PENDING)

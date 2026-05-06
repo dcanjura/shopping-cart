@@ -66,9 +66,9 @@ public class CartService {
      */
     public CartResponse addItem(AddItemRequest request, Long cartId){
         Cart cart = repository.getCartById(cartId);
-        Optional<Item> itemOpt = Optional.of(cart.getItems().stream()
+        Optional<Item> itemOpt = cart.getItems().stream()
                 .filter(i -> i.getProductId().equalsIgnoreCase(request.productId()))
-                .findFirst().orElseThrow(() -> new NotFoundException("No information found for cartId: " + cartId)));
+                .findFirst();
 
         itemOpt.ifPresentOrElse(
                 i -> {
@@ -76,6 +76,7 @@ public class CartService {
                 },
                 () -> {
                     ProductResponse product = productClient.getProductById(request.productId());
+
                     Item newItem = Item.builder()
                             .productId(request.productId())
                             .quantity(request.quantity())
@@ -124,18 +125,19 @@ public class CartService {
             throw new BadRequestException("cartId not found or not provided");
         }
 
-        Cart cart = repository.getCartById(cartId);
+        Cart cart = getCartInfo(cartId);
 
         Optional<Item> itemOpt = Optional.of(cart.getItems().stream()
                 .filter(i -> i.getProductId().equalsIgnoreCase(productId))
-                .findFirst().orElseThrow(() -> new NotFoundException("No information found for cartId")));
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No product info found with productId: " + productId)));
 
         itemOpt.ifPresentOrElse(
                 item -> {
                     item.setQuantity(request.quantity());
                 },
                 () -> {
-                    throw new RuntimeException("No item found");
+                    throw new NotFoundException("No information found for productId: " + productId);
                 }
         );
 
@@ -154,7 +156,7 @@ public class CartService {
             throw new BadRequestException("cartId not found or not provided");
         }
 
-        CartResponse cart = CartMapper.toResponse(repository.getCartById(cartId));
+        CartResponse cart = CartMapper.toResponse(getCartInfo(cartId));
 
         OrderRequest request = new OrderRequest(
                 String.valueOf(cartId),
@@ -169,6 +171,15 @@ public class CartService {
         return cart.getItems().stream()
                 .mapToDouble(i -> i.getPrice() * i.getQuantity())
                 .sum();
+    }
+
+    private Cart getCartInfo(Long id){
+        Cart cart = repository.getCartById(id);
+        if(cart != null){
+            return cart;
+        }else {
+            throw new NotFoundException("No cart info found with id: " + id);
+        }
     }
 
     private boolean isNullLessThan(Long value){

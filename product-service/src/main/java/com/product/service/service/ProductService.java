@@ -57,7 +57,11 @@ public class ProductService {
     }
 
     public String deleteProduct(String id){
-        repository.deleteById(id);
-        return "SUCCESS";
+        if(repository.getProductById(Long.valueOf(id)) != null){
+            repository.deleteById(id);
+            return "SUCCESS";
+        }else {
+            throw new NotFoundException("No product found with id: " + id);
+        }
     }
 }
