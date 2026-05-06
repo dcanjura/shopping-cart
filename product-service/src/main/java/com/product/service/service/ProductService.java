@@ -1,0 +1,63 @@
+package com.product.service.service;
+
+import com.product.service.domain.Product;
+import com.product.service.dto.ProductRequest;
+import com.product.service.dto.ProductResponse;
+import com.product.service.exception.BadRequestException;
+import com.product.service.exception.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import com.product.service.mapper.ProductMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import com.product.service.repository.ProductRepository;
+
+@Service
+@RequiredArgsConstructor
+public class ProductService {
+
+    private final ProductRepository repository;
+
+    public ProductResponse saveProduct(ProductRequest request){
+        return ProductMapper.toResponse(repository.save(Product.builder()
+                .name(request.name())
+                .price(request.price())
+                .stock(request.stock())
+                .build()));
+    }
+
+    public ProductResponse getProduct(Long id){
+        return ProductMapper.toResponse(repository.getProductById(id));
+    }
+
+    public Page<ProductResponse> getAllProducts(Pageable pageable){
+        return repository.findAll(pageable)
+                .map(ProductMapper::toResponse);
+    }
+
+    public void reduceStock(String productId, Integer quantity) {
+        if(productId == null || productId.isBlank()){
+            throw new BadRequestException("productId is required");
+        }
+
+        Product product = repository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product not found"));
+
+        if (product.getStock() < quantity) {
+            throw new BadRequestException("Not enough stock");
+        }
+
+        product.setStock(product.getStock() - quantity);
+
+        repository.save(product);
+    }
+
+    public ProductResponse updateProduct(ProductRequest request, Long id){
+        return ProductMapper.toResponse(repository.save(new Product(id, request.name(), request.price(), request.stock())));
+    }
+
+    public String deleteProduct(String id){
+        repository.deleteById(id);
+        return "SUCCESS";
+    }
+}
