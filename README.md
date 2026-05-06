@@ -23,7 +23,7 @@ The application is composed of four independent microservices:
 
 # Technologies Used
 
-* Java 21
+* Java 17
 * Spring Boot
 * Spring Web
 * Spring Data JPA
@@ -221,7 +221,7 @@ Product Service
 
 ## Requirements
 
-* Java 21
+* Java 17
 * Maven
 * IDE (IntelliJ IDEA recommended)
 
