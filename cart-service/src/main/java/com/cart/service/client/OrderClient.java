@@ -16,10 +16,15 @@ public class OrderClient {
     private String orderServiceUrl;
 
     public OrderResponse createOrder(OrderRequest request){
-        return restTemplate.postForObject(
-                orderServiceUrl + "/save",
-                request,
-                OrderResponse.class
-        );
+        try{
+            return restTemplate.postForObject(
+                    orderServiceUrl + "internal",
+                    request,
+                    OrderResponse.class
+            );
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }

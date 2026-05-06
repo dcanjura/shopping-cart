@@ -16,10 +16,15 @@ public class ProductClient {
     private String productServiceUrl;
 
     public void reduceStock(String productId, Integer quantity){
-        restTemplate.postForObject(
-                productServiceUrl + "/products/reduce-stock",
-                new ReduceStockRequest(productId, quantity),
-                Void.class
-        );
+        try {
+            restTemplate.postForObject(
+                    productServiceUrl + "/products/internal",
+                    new ReduceStockRequest(productId, quantity),
+                    Void.class
+            );
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }

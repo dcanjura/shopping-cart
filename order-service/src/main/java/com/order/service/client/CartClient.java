@@ -16,9 +16,14 @@ public class CartClient {
     private String cartServiceUrl;
 
     public CartResponse getCartById(String cartId){
-        return restTemplate.getForObject(
-                cartServiceUrl + cartId,
-                CartResponse.class
-        );
+        try {
+            return restTemplate.getForObject(
+                    cartServiceUrl + "/internal/" + cartId,
+                    CartResponse.class
+            );
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }
