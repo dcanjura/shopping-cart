@@ -1,5 +1,6 @@
 package service;
 
+import client.ProductClient;
 import domain.Cart;
 import domain.Item;
 import dto.*;
@@ -8,7 +9,6 @@ import mapper.CartMapper;
 import org.springframework.stereotype.Service;
 import repository.CartRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +16,7 @@ import java.util.Optional;
 public class CartService {
 
     private final CartRepository repository;
+    private final ProductClient productClient;
 
     public CartResponse create(CreateCartRequest request){
         return CartMapper.toResponse(repository.createCart(request.userId()));
@@ -36,10 +37,11 @@ public class CartService {
                     i.setQuantity(i.getQuantity() + request.quantity());
                 },
                 () -> {
+                    ProductResponse product = productClient.getProductById(request.productId());
                     Item newItem = Item.builder()
                             .productId(request.productId())
                             .quantity(request.quantity())
-                            .price(20.00)
+                            .price(product.price())
                             .cart(cart)
                             .build();
 
