@@ -12,7 +12,7 @@ import service.ProductService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService service;
@@ -22,22 +22,22 @@ public class ProductController {
         return ResponseEntity.ok(service.saveProduct(request));
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable @Validated Long id){
         return ResponseEntity.ok(service.getProduct(id));
     }
 
-    @GetMapping("/products")
+    @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(Pageable pageable){
         return ResponseEntity.ok(service.getAllProducts(pageable));
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> updateProduct(@RequestBody @Validated ProductRequest request, @PathVariable @Validated Long id){
         return ResponseEntity.ok(service.updateProduct(request, id));
     }
 
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable @Validated String id){
         return ResponseEntity.ok(service.deleteProduct(id) + ": Product deleted successfully");
     }
