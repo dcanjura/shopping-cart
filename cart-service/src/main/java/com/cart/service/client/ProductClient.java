@@ -16,9 +16,14 @@ public class ProductClient {
     private String productServiceUrl;
 
     public ProductResponse getProductById(String productId){
-        return  restTemplate.getForObject(
-                productServiceUrl + productId,
-                ProductResponse.class
-        );
+        try {
+            return  restTemplate.getForObject(
+                    productServiceUrl + productId,
+                    ProductResponse.class
+            );
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }

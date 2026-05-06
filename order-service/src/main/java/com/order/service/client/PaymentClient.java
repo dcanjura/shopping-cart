@@ -16,11 +16,16 @@ public class PaymentClient {
     private String paymentServiceUrl;
 
     public boolean processPayment(PaymentRequest request){
-        String response = restTemplate.postForObject(
-                paymentServiceUrl,
-                request,
-                String.class
-        );
-        return "SUCCESS".equalsIgnoreCase(response);
+        try {
+            String response = restTemplate.postForObject(
+                    paymentServiceUrl,
+                    request,
+                    String.class
+            );
+            return "SUCCESS".equalsIgnoreCase(response);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 }
