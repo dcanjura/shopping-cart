@@ -15,6 +15,11 @@ public class CartController {
 
     private final CartService service;
 
+    @GetMapping("/internal/{cartId}")
+    public ResponseEntity<CartResponse> getCartInternal(@PathVariable Long cartId){
+        return ResponseEntity.ok(service.getCartById(cartId));
+    }
+
     /**
      * Create the shopping cart using userId from request body
      * @param request
@@ -22,7 +27,7 @@ public class CartController {
      */
     @PostMapping("/create")
     public ResponseEntity<CartResponse> createCart(@RequestBody @Validated CreateCartRequest request){
-        return ResponseEntity.ok(service.create(request));
+        return ResponseEntity.status(201).body(service.create(request));
     }
 
     /**
@@ -52,6 +57,6 @@ public class CartController {
 
     @DeleteMapping("/removeItem/{cartId}/{productId}")
     public ResponseEntity<CartResponse> removeItem(@PathVariable @Validated Long cartId, @PathVariable @Validated String productId){
-        return ResponseEntity.ok(service.removeItem(cartId, productId));
+        return ResponseEntity.status(204).body(service.removeItem(cartId, productId));
     }
 }

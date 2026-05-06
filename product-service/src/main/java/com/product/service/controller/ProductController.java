@@ -20,7 +20,7 @@ public class ProductController {
 
     @PostMapping("/save")
     public ResponseEntity<ProductResponse> saveProduct(@RequestBody @Validated ProductRequest request){
-        return ResponseEntity.ok(service.saveProduct(request));
+        return ResponseEntity.status(201).body(service.saveProduct(request));
     }
 
     @GetMapping("/{id}")
@@ -31,6 +31,11 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(Pageable pageable){
         return ResponseEntity.ok(service.getAllProducts(pageable));
+    }
+
+    @PostMapping("/internal")
+    public void internalReduceStock(@RequestBody @Validated ReduceStockRequest request){
+        service.reduceStock(request.productId(), request.quantity());
     }
 
     @PostMapping("/reduce-stock")
@@ -45,6 +50,6 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable @Validated String id){
-        return ResponseEntity.ok(service.deleteProduct(id) + ": Product deleted successfully");
+        return ResponseEntity.status(204).body(service.deleteProduct(id) + ": Product deleted successfully");
     }
 }

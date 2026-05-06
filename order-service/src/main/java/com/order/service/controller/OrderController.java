@@ -15,8 +15,13 @@ public class OrderController {
 
     private final OrderService service;
 
+    @PostMapping("/internal")
+    public ResponseEntity<OrderResponse> createOrderInternal(@RequestBody @Validated OrderRequest request){
+        return ResponseEntity.status(201).body(service.createOrder(request));
+    }
+
     @PostMapping("/save")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody @Validated OrderRequest request){
-        return ResponseEntity.ok(service.createOrder(request));
+        return ResponseEntity.status(201).body(service.createOrder(request));
     }
 }
